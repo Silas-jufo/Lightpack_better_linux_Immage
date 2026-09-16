@@ -8,6 +8,8 @@ on:
 defaults:
   run:
     working-directory: ./Software
+permissions:
+  contents: read
 jobs:
   build-pacman:
     runs-on: ubuntu-20.04
