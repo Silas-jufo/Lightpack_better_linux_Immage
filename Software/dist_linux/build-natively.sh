@@ -12,7 +12,7 @@ dirs=`echo "$dirs" | cut -c 2-`
 
 usage="\n	Usage $0 ($dirs)\n"
 
-[ -z $1 ] && echo -e "$usage" && exit 1
+[ -z "$1" ] && echo -e "$usage" && exit 1
 
 pkgmgr=$1
 [ ! -e  "$pkgmgr/$buildscript" ] && echo -e "Error: $pkgmgr/$buildscript not found\n$usage" && exit 1

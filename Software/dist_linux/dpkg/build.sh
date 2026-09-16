@@ -10,7 +10,7 @@ cd -
 VERSION=`cat ../../RELEASE_VERSION`
 
 arch=amd64
-[ ! -z $1 ] && arch=$1
+[ ! -z "$1" ] && arch=$1
 
 debdir=deb
 rm -rf "$debdir"

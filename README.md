@@ -138,7 +138,7 @@ _(this is a Debian based example, see Software/dist_linux/*/Dockerfile for your 
 #### Building a Package:
 If you target your current system / package backend:
 1. `cd Software/dist_linux`
-2. Run `./build-natively.sh` to list available backends (`dpkg`, `pacman`, `flatpak`, ...)
+2. Run `./build-natively.sh` to list available backends (`dpkg`, `pacman`, `flatpak`, `appimage`, ...)
 3. Run `./build-natively.sh <package-backend>`
 4. Resulting package should be in `<package-backend>/` folder
 

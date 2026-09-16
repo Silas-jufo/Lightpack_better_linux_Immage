@@ -10,16 +10,16 @@ dirs=`echo "$dirs" | cut -c 2-`
 
 usage="\n	Usage $0 ($dirs) os-image-name os-image-tag\n"
 
-[ -z $1 ] && echo -e "$usage" && exit 1
+[ -z "$1" ] && echo -e "$usage" && exit 1
 
 pkgmgr=dpkg
-[ ! -z $1 ] && pkgmgr=$1
+[ ! -z "$1" ] && pkgmgr=$1
 
 os=ubuntu
-[ ! -z $2 ] && os=$2
+[ ! -z "$2" ] && os=$2
 
 version=20.04
-[ ! -z $3 ] && version=$3
+[ ! -z "$3" ] && version=$3
 
 
 

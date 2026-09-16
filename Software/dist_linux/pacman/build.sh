@@ -5,7 +5,7 @@ set -xe
 PULSEAUDIO_SUPPORT=
 cd ../..
 qmake -r
-if [ "$(grep -Fo PULSEAUDIO_SUPPORT src/Makefile)" == "PULSEAUDIO_SUPPORT" ]
+if grep -Fq PULSEAUDIO_SUPPORT src/Makefile
 then
     echo PULSEAUDIO_SUPPORT
     PULSEAUDIO_SUPPORT="'libpulse' 'fftw'"
