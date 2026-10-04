@@ -24,6 +24,7 @@ struct WaylandGrabberData
 	std::unique_ptr<QVideoSink> sink;
 	QByteArray frameBytes;
 	int bytesPerLine{0};
+	BufferFormat format{BufferFormatArgb};
 	bool hasFrame{false};
 };
 
@@ -109,8 +110,27 @@ bool WaylandGrabber::reallocate(const QList<ScreenInfo> &screens)
 				QImage image = frame.toImage();
 				if (image.isNull())
 					return;
-				if (image.format() != QImage::Format_ARGB32)
+				switch (image.format()) {
+				case QImage::Format_ARGB32:
+				case QImage::Format_ARGB32_Premultiplied:
+				case QImage::Format_RGB32:
+					d->format = BufferFormatArgb;
+					break;
+				case QImage::Format_RGBA8888:
+				case QImage::Format_RGBA8888_Premultiplied:
+				case QImage::Format_RGBX8888:
+					d->format = BufferFormatRgba;
+					break;
+				case QImage::Format_BGRA8888:
+				case QImage::Format_BGRA8888_Premultiplied:
+				case QImage::Format_BGRX8888:
+					d->format = BufferFormatBgra;
+					break;
+				default:
 					image = image.convertToFormat(QImage::Format_ARGB32);
+					d->format = BufferFormatArgb;
+					break;
+				}
 				d->bytesPerLine = image.bytesPerLine();
 				d->frameBytes = QByteArray(reinterpret_cast<const char *>(image.constBits()), image.sizeInBytes());
 				d->hasFrame = !d->frameBytes.isEmpty();
@@ -141,6 +161,7 @@ GrabResult WaylandGrabber::grabScreens()
 		screen.imgData = reinterpret_cast<const unsigned char*>(d->frameBytes.constData());
 		screen.imgDataSize = static_cast<size_t>(d->frameBytes.size());
 		screen.bytesPerRow = static_cast<size_t>(d->bytesPerLine);
+		screen.imgFormat = d->format;
 	}
 
 	return GrabResultOk;

@@ -868,7 +868,7 @@ void SettingsWindow::initGrabbersRadioButtonsVisibility()
 	ui->radioButton_GrabMacCoreGraphics->setChecked(true);
 #endif
 #ifdef WAYLAND_QT_GRAB_SUPPORT
-	if (qEnvironmentVariable(QStringLiteral("XDG_SESSION_TYPE")).compare(QStringLiteral("wayland"), Qt::CaseInsensitive) == 0) {
+	if (qEnvironmentVariable("XDG_SESSION_TYPE").compare(QStringLiteral("wayland"), Qt::CaseInsensitive) == 0) {
 		ui->radioButton_GrabWayland->setChecked(true);
 	}
 #endif
