@@ -320,6 +320,9 @@ void SettingsWindow::connectSignalsSlots()
 #ifdef X11_GRAB_SUPPORT
 	connect(ui->radioButton_GrabX11, &QRadioButton::toggled, this, &SettingsWindow::onGrabberChanged);
 #endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	connect(ui->radioButton_GrabWayland, &QRadioButton::toggled, this, &SettingsWindow::onGrabberChanged);
+#endif
 #ifdef MAC_OS_AV_GRAB_SUPPORT
 	connect(ui->radioButton_GrabMacAVFoundation, &QRadioButton::toggled, this, &SettingsWindow::onGrabberChanged);
 #endif
@@ -851,6 +854,9 @@ void SettingsWindow::initGrabbersRadioButtonsVisibility()
 #else
 	ui->radioButton_GrabX11->setChecked(true);
 #endif
+#ifndef WAYLAND_QT_GRAB_SUPPORT
+	ui->radioButton_GrabWayland->setVisible(false);
+#endif
 #ifndef MAC_OS_AV_GRAB_SUPPORT
 	ui->radioButton_GrabMacAVFoundation->setVisible(false);
 #else
@@ -860,6 +866,11 @@ void SettingsWindow::initGrabbersRadioButtonsVisibility()
 	ui->radioButton_GrabMacCoreGraphics->setVisible(false);
 #else
 	ui->radioButton_GrabMacCoreGraphics->setChecked(true);
+#endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	if (qEnvironmentVariable(QStringLiteral("XDG_SESSION_TYPE")).compare(QStringLiteral("wayland"), Qt::CaseInsensitive) == 0) {
+		ui->radioButton_GrabWayland->setChecked(true);
+	}
 #endif
 }
 
@@ -1990,6 +2001,11 @@ void SettingsWindow::updateUiFromSettings()
 		ui->radioButton_GrabX11->setChecked(true);
 		break;
 #endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	case Grab::GrabberTypeWayland:
+		ui->radioButton_GrabWayland->setChecked(true);
+		break;
+#endif
 #ifdef MAC_OS_AV_GRAB_SUPPORT
 	case Grab::GrabberTypeMacAVFoundation:
 		ui->radioButton_GrabMacAVFoundation->setChecked(true);
@@ -2022,6 +2038,11 @@ Grab::GrabberType SettingsWindow::getSelectedGrabberType()
 #ifdef X11_GRAB_SUPPORT
 	if (ui->radioButton_GrabX11->isChecked()) {
 		return Grab::GrabberTypeX11;
+	}
+#endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	if (ui->radioButton_GrabWayland->isChecked()) {
+		return Grab::GrabberTypeWayland;
 	}
 #endif
 #ifdef WINAPI_GRAB_SUPPORT

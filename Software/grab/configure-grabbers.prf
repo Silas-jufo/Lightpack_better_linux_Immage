@@ -2,6 +2,12 @@
 # Linux/UNIX platform
 unix:!macx {
     SUPPORTED_GRABBERS += X11_GRAB_SUPPORT
+    versionAtLeast(QT_VERSION, 6.0.0) {
+        qtHaveModule(multimedia) {
+            SUPPORTED_GRABBERS += WAYLAND_QT_GRAB_SUPPORT
+            QT += multimedia
+        }
+    }
 }
 
 # Mac platform

@@ -39,6 +39,10 @@ unix:!macx {
         GRABBERS_HEADERS += include/X11Grabber.hpp
         GRABBERS_SOURCES += X11Grabber.cpp
     }
+    contains(DEFINES, WAYLAND_QT_GRAB_SUPPORT) {
+        GRABBERS_HEADERS += include/WaylandGrabber.hpp
+        GRABBERS_SOURCES += WaylandGrabber.cpp
+    }
 }
 
 # Mac platform

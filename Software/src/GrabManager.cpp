@@ -36,6 +36,7 @@
 #include "WinAPIGrabber.hpp"
 #include "DDuplGrabber.hpp"
 #include "X11Grabber.hpp"
+#include "WaylandGrabber.hpp"
 #include "MacOSCGGrabber.hpp"
 #include "MacOSAVGrabber.h"
 #include "D3D10Grabber.hpp"
@@ -221,7 +222,7 @@ void GrabManager::onGrabberTypeChanged(const Grab::GrabberType grabberType)
 
 	m_grabber = queryGrabber(grabberType);
 
-	if (isStartNeeded) {
+	if (m_grabber != NULL && isStartNeeded) {
 #ifdef D3D10_GRAB_SUPPORT
 		if (Settings::isDx1011GrabberEnabled())
 			m_d3d10Grabber->startGrabbing();
@@ -644,6 +645,9 @@ void GrabManager::initGrabbers()
 #ifdef X11_GRAB_SUPPORT
 	m_grabbers[Grab::GrabberTypeX11] = initGrabber(new X11Grabber(NULL, m_grabberContext));
 #endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	m_grabbers[Grab::GrabberTypeWayland] = initGrabber(new WaylandGrabber(NULL, m_grabberContext));
+#endif
 
 #ifdef MAC_OS_CG_GRAB_SUPPORT
 	m_grabbers[Grab::GrabberTypeMacCoreGraphics] = initGrabber(new MacOSCGGrabber(NULL, m_grabberContext));
@@ -698,8 +702,18 @@ GrabberBase *GrabManager::queryGrabber(Grab::GrabberType grabberType)
 	if (m_grabbers[grabberType] != NULL) {
 		result = m_grabbers[grabberType];
 	} else {
-		qCritical() << Q_FUNC_INFO << "unsupported for the platform grabber type: " << grabberType << ", using QtGrabber";
-		result = m_grabbers[Grab::GrabberTypeQt];
+		qCritical() << Q_FUNC_INFO << "unsupported for the platform grabber type: " << grabberType;
+		result = nullptr;
+		for (GrabberBase* candidate : m_grabbers) {
+			if (candidate != nullptr) {
+				result = candidate;
+				break;
+			}
+		}
+		if (result == nullptr) {
+			qCritical() << Q_FUNC_INFO << "no grabber available";
+			return nullptr;
+		}
 	}
 
 	result->setGrabInterval(Settings::getGrabSlowdown());

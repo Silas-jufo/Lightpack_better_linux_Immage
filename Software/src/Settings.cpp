@@ -262,6 +262,7 @@ static const QString QtEachWidget = QStringLiteral("QtEachWidget");
 static const QString WinAPI = QStringLiteral("WinAPI");
 static const QString WinAPIEachWidget = QStringLiteral("WinAPIEachWidget");
 static const QString X11 = QStringLiteral("X11");
+static const QString Wayland = QStringLiteral("Wayland");
 static const QString D3D9 = QStringLiteral("D3D9");
 static const QString MacCoreGraphics = QStringLiteral("MacCoreGraphics");
 static const QString MacAVFoundation = QStringLiteral("MacAVFoundation");
@@ -1546,6 +1547,10 @@ Grab::GrabberType Settings::getGrabberType()
 	if (strGrabber == Profile::Value::GrabberType::X11)
 		return Grab::GrabberTypeX11;
 #endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	if (strGrabber == Profile::Value::GrabberType::Wayland)
+		return Grab::GrabberTypeWayland;
+#endif
 
 #ifdef MAC_OS_CG_GRAB_SUPPORT
 	if (strGrabber == Profile::Value::GrabberType::MacCoreGraphics)
@@ -1602,6 +1607,11 @@ void Settings::setGrabberType(Grab::GrabberType grabberType)
 #ifdef X11_GRAB_SUPPORT
 	case Grab::GrabberTypeX11:
 		strGrabber = Profile::Value::GrabberType::X11;
+		break;
+#endif
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+	case Grab::GrabberTypeWayland:
+		strGrabber = Profile::Value::GrabberType::Wayland;
 		break;
 #endif
 
@@ -2355,6 +2365,10 @@ void Settings::migrateSettings()
 
 #ifdef X11_GRAB_SUPPORT
 		Settings::setGrabberType(Grab::GrabberTypeX11);
+#endif
+
+#ifdef WAYLAND_QT_GRAB_SUPPORT
+		Settings::setGrabberType(Grab::GrabberTypeWayland);
 #endif
 
 #if defined(MAC_OS_AV_GRAB_SUPPORT)
